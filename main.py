@@ -19,15 +19,10 @@ def transform(df):
         "@" + df["username"]
     )
 
-    bot_rows = df["username"].str.contains("bot") # this selects all the rows that have 'bot' in the username
-
-    df = df[~df["username"].str.contains("bot")] # ~ is a logical NOT operator in python - in this case, will keep all rows that does NOT contain "bot"
+    df = df[~df["username"].str.contains("bot")].copy() # ~ is a logical NOT operator in python - in this case, will keep all rows that does NOT contain "bot". Have to make a copy as this 
 
     # Cleaning location column
-    df["location"] = df["location"].astype(str).str.strip()
-    df["location"] = df["location"].replace("", None)
-    df["location"] = df["location"].replace("nan", None)
-
+    df["location"] = df["location"].astype(str).str.strip().replace("", None).fillna("Unknown")
 
     # Dropping text column
     df = df.drop(columns=["text"])
@@ -39,13 +34,14 @@ def transform(df):
     df["retweets"] = df["retweets"].fillna(0).astype(int)
 
     # Cleaning hashtags column
-    df["hashtags"] = df["hashtags"].astype(str).str.strip()
-    df["hashtags"] = df["hashtags"].replace("", None)
-    df["hashtags"] = df["hashtags"].replace("nan", None)
+    df["hashtags"] = df["hashtags"].astype(str).str.strip().replace("", None).fillna("Unknown")  #put the below 3 lines into one
+    # df["hashtags"] = df["hashtags"].astype(str).str.strip()
+    # df["hashtags"] = df["hashtags"].replace("", None)   
+    # df["hashtags"] = df["hashtags"].fillna(None)
+
 
     # Cleaning verified column
-    df["verified"] = df["verified"].fillna("Unknown")
-    df["verified"] = df["verified"].astype(str).str.lower()
+    df["verified"] = df["verified"].astype(str).str.lower().fillna("Unknown")
 
     yes_no_mapping = {
         "true": "Yes",
@@ -62,6 +58,7 @@ def transform(df):
     df["created_at"] = df["created_at"].dt.strftime("%Y-%m-%d")
     df["created_at"] = df["created_at"].fillna("Unknown")
 
+
     return df
 
 # LOAD
@@ -77,5 +74,5 @@ def main():
     df = transform(df)
     load(df)
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
