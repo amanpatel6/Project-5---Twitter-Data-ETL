@@ -1,16 +1,15 @@
 import pandas as pd
 import numpy as np
+from dateutil import parser
 
 # EXTRACT
 def extract(file_path):
     df = pd.read_csv(file_path)
 
-    return df
-
+    return df 
 # TRANSFORM
-
-# Cleaning username column
 def transform(df):
+    # Cleaning username column
     df["username"] = df["username"].astype(str).str.strip()
 
     df["username"] = np.where(                  #this is essentially a IF ELSE statement. so where username starts with @, keep username ELSE add @ before it
@@ -58,8 +57,8 @@ def transform(df):
     df["created_at"] = df["created_at"].dt.strftime("%Y-%m-%d")
     df["created_at"] = df["created_at"].fillna("Unknown")
 
-
     return df
+
 
 # LOAD
 def load(df):
